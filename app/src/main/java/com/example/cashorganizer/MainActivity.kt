@@ -34,33 +34,14 @@ class MainActivity : AppCompatActivity() {
         // Action click
         btnDatePicker.setOnClickListener {
             // Show the DatePicker dialog
-            showDatePicker()
+            showDialogDatePicker()
         }
     }
 
-    private fun showDatePicker() {
+    private fun showDialogDatePicker() {
         // Create a DatePickerDialog
-        val datePickerDialog = DatePickerDialog(
-            this, {DatePicker, year: Int, monthOfYear: Int, dayOfMonth: Int ->
-                // Create a new Calendar instance to hold the selected date
-                val selectedDate = Calendar.getInstance()
-                // Set the selected date using the values received from the DatePicker dialog
-                selectedDate.set(year, monthOfYear, dayOfMonth)
-                // Create a SimpleDateFormat to format the date as "dd/MM/yyyy"
-                val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-                // Format the selected date into a string
-                val formattedDate = dateFormat.format(selectedDate.time)
-                // Update the TextView to display the selected date with the "Selected Date: " prefix
-                val monthName = fullMonth[monthOfYear]
-                val yearThai = year + 543
-                txtPeriod.text = "รอบวันที่ $dayOfMonth $monthName $yearThai"
-                  },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        )
-        // Show the DatePicker dialog
-        datePickerDialog.show()
+        var dialogDatePeriod = DatePeriodFragment()
+        dialogDatePeriod.show(supportFragmentManager, "customDialog")
     }
 
     private fun initUI() {
