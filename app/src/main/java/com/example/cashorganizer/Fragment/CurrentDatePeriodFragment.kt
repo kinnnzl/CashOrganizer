@@ -1,4 +1,4 @@
-package com.example.cashorganizer
+package com.example.cashorganizer.Fragment
 
 import android.graphics.Color
 import android.graphics.Point
@@ -9,15 +9,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
+import com.example.cashorganizer.R
+import com.google.android.material.button.MaterialButton
 
-
-class DatePeriodFragment: DialogFragment() {
+class CurrentDatePeriodFragment: DialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_period_date_dialog, container, false)
+        val viewPeriodDialog: View = inflater.inflate(R.layout.fragment_current_period_date_dialog, container, false)
+        return viewPeriodDialog
     }
 
     override fun onStart() {

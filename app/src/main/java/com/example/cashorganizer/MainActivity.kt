@@ -1,52 +1,67 @@
 package com.example.cashorganizer
 
-import android.app.DatePickerDialog
-import android.app.Dialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.DatePicker
 import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import com.example.cashorganizer.Fragment.DatePeriodFragment
 import com.example.cashorganizer.databinding.ActivityMainBinding
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
+import com.example.cashorganizer.model.PeriodDateViewModel
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding:ActivityMainBinding
     private lateinit var txtPeriod: TextView
     private lateinit var btnDatePicker: CardView
-    private val calendar = Calendar.getInstance()
+    private lateinit var periodDateViewModelFragment: PeriodDateViewModel
+    private var currentDay: String = ""
+    private var currentMonth: Int = -1
+    private var currentYear: String = ""
     private val fullMonth: List<String> = listOf("มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
-        // Initialize views
+        // Initialize
+        setupView()
+        setupEventAction()
+        setUpViewModel()
+    }
+
+    private fun setupView() {
         txtPeriod = findViewById(R.id.txtPeriod)
         btnDatePicker = findViewById(R.id.cardPeriod)
-        initUI()
+    }
 
-        // Action click
+    private fun showDialogDatePicker() {
+        var dialogDatePeriod = DatePeriodFragment()
+        dialogDatePeriod.show(supportFragmentManager, "dialogDatePeriod")
+    }
+
+    private fun setupEventAction() {
+        binding.customToolbar.ivAccount.setOnClickListener{
+            Toast.makeText(this, "Account clicked", Toast.LENGTH_SHORT).show()
+        }
         btnDatePicker.setOnClickListener {
-            // Show the DatePicker dialog
             showDialogDatePicker()
         }
     }
 
-    private fun showDialogDatePicker() {
-        // Create a DatePickerDialog
-        var dialogDatePeriod = DatePeriodFragment()
-        dialogDatePeriod.show(supportFragmentManager, "customDialog")
-    }
-
-    private fun initUI() {
-        binding.customToolbar.ivAccount.setOnClickListener{
-            Toast.makeText(this, "Account clicked", Toast.LENGTH_SHORT).show()
-        }
+    private fun setUpViewModel() {
+        periodDateViewModelFragment = ViewModelProvider(this)[PeriodDateViewModel::class.java]
+        periodDateViewModelFragment.currentDay.observe(this, Observer {
+            currentDay = it
+            periodDateViewModelFragment.currentMonth.observe(this, Observer {
+                currentMonth = it
+                periodDateViewModelFragment.currentYear.observe(this, Observer {
+                    currentYear = it
+                    Toast.makeText(this, "$currentDay/${fullMonth[currentMonth]}/$currentYear", Toast.LENGTH_SHORT).show()
+                })
+            })
+        })
     }
 }
