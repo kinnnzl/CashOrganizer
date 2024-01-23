@@ -9,19 +9,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.CalendarView
-import android.widget.Toast
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.ViewModelProvider
 import com.example.cashorganizer.R
-import com.example.cashorganizer.model.PeriodDateViewModel
+import com.example.cashorganizer.share.PeriodDateInterface
 import com.google.android.material.button.MaterialButton
 import java.util.Calendar
-import kotlin.time.Duration.Companion.days
 
 
 class DatePeriodFragment: DialogFragment() {
     private lateinit var btnCurrentDatePeriod: MaterialButton
-    private lateinit var periodDateViewModel: PeriodDateViewModel
+    private lateinit var periodDateInterface: PeriodDateInterface
     private lateinit var calendar: CalendarView
     private var currentDay: String = ""
     private var currentMonth: Int = -1
@@ -37,19 +34,17 @@ class DatePeriodFragment: DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        periodDateViewModel = ViewModelProvider(requireActivity()).get(PeriodDateViewModel::class.java)
+        periodDateInterface = activity as PeriodDateInterface
         setupView(view)
-        setupClickListeners(view)
+        setupClickListeners()
     }
 
-    private fun setupClickListeners(view: View) {
+    private fun setupClickListeners() {
         btnCurrentDatePeriod.setOnClickListener {
             currentDay = if (currentDay == "") Calendar.getInstance().get(Calendar.DAY_OF_MONTH).toString() else currentDay
             currentMonth = if (currentMonth == -1) Calendar.getInstance().get(Calendar.MONTH) else currentMonth
             currentYear = if (currentYear == "") Calendar.getInstance().get(Calendar.YEAR).toString() else currentYear
-            periodDateViewModel.setCurrentDay(currentDay)
-            periodDateViewModel.setCurrentMonth(currentMonth)
-            periodDateViewModel.setCurrentYear(currentYear)
+            periodDateInterface.transferCurrentDate(currentDay, currentMonth, currentYear)
             dismiss()
         }
         calendar.setOnDateChangeListener(CalendarView.OnDateChangeListener { view, year, month, dayOfMonth ->

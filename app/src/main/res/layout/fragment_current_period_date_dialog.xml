@@ -9,10 +9,35 @@
     <include
         android:layout_width="match_parent"
         android:id="@+id/periodDateToolbar"
-        layout="@layout/period_date_toolbar"
+        layout="@layout/default_toolbar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="IncludeLayoutParam"></include>
+
+    <TextView
+        android:id="@+id/txtCurrentDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="XX XXXXX XXXX"
+        android:textSize="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/periodDateToolbar" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnConfirmCurrentPeriodDate"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:backgroundTint="@color/yellow_light"
+        android:text="ยืนยัน"
+        android:textColor="@color/black"
+        app:cornerRadius="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtCurrentDate" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
