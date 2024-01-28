@@ -63,9 +63,9 @@ class CurrentDatePeriodFragment: DialogFragment() {
     }
 
     private fun setupValue() {
-        currentDay = arguments?.getString("CurrentDay")!!
-        currentMonth = arguments?.getInt("CurrentMonth")!!
-        currentYear = arguments?.getString("CurrentYear")!!
+        currentDay = arguments?.getString("CurrentDay") ?: ""
+        currentMonth = arguments?.getInt("CurrentMonth") ?: -1
+        currentYear = arguments?.getString("CurrentYear") ?: ""
 
         headerTextDialog.text = "วันนี้"
         currentDatePeriod.text = "$currentDay ${fullMonth[currentMonth!!]} $currentYear"
@@ -73,7 +73,7 @@ class CurrentDatePeriodFragment: DialogFragment() {
 
     private fun setupClickListeners(view: View) {
         btnConfirmCurrentPeriodDate.setOnClickListener {
-            periodDateInterface.transferConfirmCurrentDate(currentDay, currentMonth, currentYear)
+            periodDateInterface.transferConfirmDate(currentDay, currentMonth, currentYear, "", -1, "")
             dismiss()
         }
     }
