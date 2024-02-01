@@ -28,7 +28,7 @@ class IncomeTypeActivity : AppCompatActivity() {
 
     private fun setupView() {
         icIncomeTypeBack = findViewById(R.id.icIncomeTypeBack)
-        recyclerview = findViewById<RecyclerView>(R.id.recyclerviewIncomeType)
+        recyclerview = findViewById(R.id.recyclerviewIncomeType)
         recyclerview.layoutManager = LinearLayoutManager(this)
     }
 
