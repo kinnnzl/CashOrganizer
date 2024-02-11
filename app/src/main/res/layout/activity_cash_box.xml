@@ -40,7 +40,7 @@
         </com.google.android.material.card.MaterialCardView>
 
         <TextView
-            android:id="@+id/txtCashBoxPeriodDate"
+            android:id="@+id/txtCashBoxCategory"
             style="@style/TextAppearance.MaterialComponents.Headline3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -62,7 +62,7 @@
             app:cardCornerRadius="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txtCashBoxPeriodDate"
+            app:layout_constraintTop_toBottomOf="@+id/txtCashBoxCategory"
             app:strokeColor="@color/black">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -117,7 +117,7 @@
             app:layout_constraintTop_toBottomOf="@+id/cardAmountCashBox" />
 
         <TextView
-            android:id="@+id/btnTypeReceive"
+            android:id="@+id/btnIncomeType"
             style="@style/TextAppearance.MaterialComponents.Headline3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -137,14 +137,14 @@
             android:layout_marginEnd="30dp"
             android:background="@drawable/layout_toolbar_border"
             android:padding="10dp"
-            app:layout_constraintEnd_toEndOf="@+id/btnTypeReceive"
+            app:layout_constraintEnd_toEndOf="@+id/btnIncomeType"
             app:layout_constraintStart_toStartOf="@+id/txtTypeReceive"
             app:layout_constraintTop_toBottomOf="@+id/txtTypeReceive">
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <EditText
-            android:id="@+id/editText"
+            android:id="@+id/incomeDesc"
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:layout_marginStart="25dp"

@@ -1,12 +1,12 @@
 package com.example.cashorganizer
 
+import android.app.Activity
 import android.content.ClipData
 import android.content.ClipDescription
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.format.DateFormat
 import android.util.Log
@@ -14,29 +14,38 @@ import android.view.DragEvent
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.cardview.widget.CardView
 import androidx.databinding.DataBindingUtil
-import com.example.cashorganizer.Fragment.DatePeriodFragment
-import com.example.cashorganizer.databinding.ActivityMainBinding
+import com.example.cashorganizer.Fragment.AddPlanMoneyFragment
 import com.example.cashorganizer.Fragment.CurrentDatePeriodFragment
 import com.example.cashorganizer.Fragment.CustomDatePeriodFragment
+import com.example.cashorganizer.Fragment.DatePeriodFragment
+import com.example.cashorganizer.databinding.ActivityMainBinding
 import com.example.cashorganizer.share.PeriodDateInterface
 import com.example.cashorganizer.utilities.MyDragShadowBuilder
+import com.example.cashorganizer.utilities.RequestCode
+import com.example.cashorganizer.utilities.UtilFunction.Validation.convertValueToFormatMoney
 import com.google.android.material.card.MaterialCardView
+import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.Date
 
 class MainActivity : AppCompatActivity(), PeriodDateInterface {
+    private lateinit var binding:ActivityMainBinding
     private lateinit var dialogConfirmCurrentDatePeriod: CurrentDatePeriodFragment
     private lateinit var dialogConfirmCustomDatePeriod: CustomDatePeriodFragment
+    private lateinit var dialogAddPlanMoney: AddPlanMoneyFragment
     private lateinit var dialogDatePeriod: DatePeriodFragment
     private lateinit var btnAddCashBox: AppCompatImageView
-    private lateinit var binding:ActivityMainBinding
     private lateinit var txtPeriod: TextView
+    private lateinit var valueCashBox: TextView
     private lateinit var btnDatePicker: CardView
-    private lateinit var cardCashbox: MaterialCardView
-    lateinit var sharedPeriodDate : SharedPreferences
+    private lateinit var cardCashBox: MaterialCardView
+    private lateinit var cardAddPlanMoney: CardView
+    private lateinit var sharedPeriodDate : SharedPreferences
+    private lateinit var sharedCashBox : SharedPreferences
     private lateinit var startDate: Date
     private lateinit var endDate: Date
     private val fullMonth: List<String> = listOf("มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม")
@@ -53,17 +62,30 @@ class MainActivity : AppCompatActivity(), PeriodDateInterface {
     }
 
     private fun setupView() {
+        //region Setup view period date
         txtPeriod = findViewById(R.id.txtPeriod)
         btnDatePicker = findViewById(R.id.cardPeriod)
-        cardCashbox = findViewById(R.id.cardCashbox)
-        btnAddCashBox = findViewById(R.id.btnAddCashBox)
         dialogDatePeriod = DatePeriodFragment()
         dialogConfirmCurrentDatePeriod = CurrentDatePeriodFragment()
         dialogConfirmCustomDatePeriod = CustomDatePeriodFragment()
         sharedPeriodDate = getSharedPreferences("PeriodDate" , Context.MODE_PRIVATE)
+        //endregion
+
+        //region Setup view cash box
+        cardCashBox = findViewById(R.id.cardCashbox)
+        btnAddCashBox = findViewById(R.id.btnAddCashBox)
+        valueCashBox = findViewById(R.id.valueCashBox)
+        sharedCashBox = getSharedPreferences("CashBox" , Context.MODE_PRIVATE)
+        //endregion
+
+        //region Setup view plan money
+        cardAddPlanMoney = findViewById(R.id.cardAddPlanMoney)
+        dialogAddPlanMoney = AddPlanMoneyFragment()
+        //endregion
     }
 
     private fun setupValue() {
+        //region Setup value period date
         if (sharedPeriodDate.getString("StartDate", "") != "") {
             startDate = SimpleDateFormat("dd-MM-yyyy").parse(sharedPeriodDate.getString("StartDate", ""))
             if (sharedPeriodDate.getString("StartDate", "") != "" && sharedPeriodDate.getString("EndDate", "") != "") {
@@ -82,25 +104,34 @@ class MainActivity : AppCompatActivity(), PeriodDateInterface {
                         "${DateFormat.format("yyyy", startDate)}"
             }
         }
-    }
+        //endregion
 
-    private fun showDialogDatePicker() {
-        dialogDatePeriod.show(supportFragmentManager, "dialogDatePeriod")
+        //region Setup value cash box
+        if (sharedCashBox.getString("IncomeValue", "") != "") {
+            valueCashBox.text = convertValueToFormatMoney(sharedCashBox.getString("IncomeValue", "") ?: "0.00")
+        }
+        //endregion
     }
 
     private fun setupClickListeners() {
+        //region Setup click toolbar
         binding.customToolbar.ivAccount.setOnClickListener{
             Toast.makeText(this, "Account clicked", Toast.LENGTH_SHORT).show()
         }
+        //endregion
+
+        //region Setup click period date
         btnDatePicker.setOnClickListener {
             val bundle = Bundle()
             bundle.putBoolean("IsSelectStartDate", false)
             bundle.putBoolean("IsSelectEndDate", false)
             dialogDatePeriod.arguments = bundle
-            showDialogDatePicker()
+            openDialogDatePicker()
         }
+        //endregion
 
-        cardCashbox.setOnLongClickListener { v ->
+        //region Setup click cash box
+        cardCashBox.setOnLongClickListener { v ->
             val item = ClipData.Item(v.tag as? CharSequence)
             val dragData = ClipData(
                 v.tag as? CharSequence,
@@ -116,7 +147,7 @@ class MainActivity : AppCompatActivity(), PeriodDateInterface {
             true
         }
 
-        cardCashbox.setOnDragListener { v, e ->
+        cardCashBox.setOnDragListener { v, e ->
             when (e.action) {
                 DragEvent.ACTION_DRAG_STARTED -> {
                     if (e.clipDescription.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
@@ -169,8 +200,20 @@ class MainActivity : AppCompatActivity(), PeriodDateInterface {
 
         btnAddCashBox.setOnClickListener {
             val intent = Intent(this, CashBoxActivity::class.java)
-            startActivity(intent)
+            startActivityForResult(intent, RequestCode.MAIN_INCOME_TYPE)
         }
+        //endregion
+
+        //region Setup click plan money
+        cardAddPlanMoney.setOnClickListener {
+            dialogAddPlanMoney.show(supportFragmentManager, "dialogAddPlanMoney")
+        }
+        //endregion
+    }
+
+    //region Period date
+    private fun openDialogDatePicker() {
+        dialogDatePeriod.show(supportFragmentManager, "dialogDatePeriod")
     }
 
     private fun openConfirmCurrentDate() {
@@ -237,7 +280,7 @@ class MainActivity : AppCompatActivity(), PeriodDateInterface {
         bundle.putInt("EndMonth", endMonth)
         bundle.putString("EndYear", endYear)
         dialogDatePeriod.arguments = bundle
-        showDialogDatePicker()
+        openDialogDatePicker()
     }
 
     override fun transferEnterCustomDate(
@@ -258,5 +301,32 @@ class MainActivity : AppCompatActivity(), PeriodDateInterface {
         bundle.putBoolean("IsFirstOpenCustomDate", false)
         dialogConfirmCustomDatePeriod.arguments = bundle
         openConfirmCustomDate()
+    }
+    //endregion
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == RequestCode.MAIN_INCOME_TYPE) {
+            if (resultCode == Activity.RESULT_OK) {
+                val editShareCashBox = sharedCashBox.edit()
+                val incomeDay = data?.getStringExtra("IncomeDay") ?: "0"
+                val incomeMonth = data?.getStringExtra("IncomeMonth") ?: "0"
+                val incomeYear = data?.getStringExtra("IncomeYear") ?: "0"
+                val incomeType = data?.getStringExtra("IncomeType")
+                val categoryType = data?.getStringExtra("CategoryType")
+                val incomeValue = data?.getStringExtra("IncomeValue") ?: "0.00"
+                val incomeDesc = data?.getStringExtra("IncomeDesc")
+                editShareCashBox.putInt("IncomeDay", incomeDay.toInt())
+                editShareCashBox.putInt("IncomeMonth", incomeMonth.toInt())
+                editShareCashBox.putInt("IncomeYear", incomeYear.toInt())
+                editShareCashBox.putString("IncomeType", incomeType)
+                editShareCashBox.putString("CategoryType", categoryType)
+                editShareCashBox.putString("IncomeValue", incomeValue)
+                editShareCashBox.putString("IncomeDesc", incomeDesc)
+                editShareCashBox.apply()
+
+                valueCashBox.text = incomeValue
+            }
+        }
     }
 }

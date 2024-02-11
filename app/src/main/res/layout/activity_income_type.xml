@@ -16,7 +16,7 @@
             app:layout_constraintTop_toTopOf="parent"></include>
 
         <EditText
-            android:id="@+id/editText"
+            android:id="@+id/searchIncomeType"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginStart="20dp"
@@ -25,6 +25,7 @@
             android:background="@drawable/edit_text_border"
             android:gravity="top"
             android:hint="ค้นหา"
+            android:focusable="false"
             android:padding="10dp"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -40,7 +41,7 @@
             android:layout_marginTop="20dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editText"
+            app:layout_constraintTop_toBottomOf="@+id/searchIncomeType"
             tools:itemCount="5"
             tools:listitem="@layout/income_type_card_view" />
 

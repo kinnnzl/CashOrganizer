@@ -7,15 +7,20 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cashorganizer.R
-import com.example.cashorganizer.model.IncomeTypeViewModel
+import com.example.cashorganizer.model.CategoryViewModel
 
-class IncomeTypeAdapter(private val mList: List<IncomeTypeViewModel>, private val itemClickListener: ItemClickListener) : RecyclerView.Adapter<IncomeTypeAdapter.ViewHolder>() {
+class CategoryAdapter(
+    private val mList: List<CategoryViewModel>,
+    private val itemClickListener: ItemClickListener,
+    private val incomeCode: Int
+)  : RecyclerView.Adapter<CategoryAdapter.ViewHolder>() {
     interface ItemClickListener {
-        fun onItemClick(position: Int)
+        fun onItemClick(position: Int, incomeCode: Int)
     }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.income_type_card_view, parent, false)
+            .inflate(R.layout.category_type_card_view, parent, false)
 
         return ViewHolder(view)
     }
@@ -25,12 +30,12 @@ class IncomeTypeAdapter(private val mList: List<IncomeTypeViewModel>, private va
         val ItemsViewModel = mList[position]
         holder.txtIncomeType.text = ItemsViewModel.text
 
-        setupClickListeners(holder, position)
+        setupClickListeners(holder, position, incomeCode)
     }
 
-    private fun setupClickListeners(holder: ViewHolder, position: Int) {
+    private fun setupClickListeners(holder: ViewHolder, position: Int, incomeCode: Int) {
         holder.rowIncomeType.setOnClickListener {
-            itemClickListener.onItemClick(position)
+            itemClickListener.onItemClick(position, incomeCode)
         }
     }
 

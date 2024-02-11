@@ -5,4 +5,7 @@
     <color name="primary">#FFFFFFFF</color>
     <color name="gray">#DADADA</color>
     <color name="yellow_light">#FFE5A1</color>
+    <color name="yellow1">#8C722F</color>
+    <color name="green">#1FA845</color>
+    <color name="green_light">#62C17C</color>
 </resources>

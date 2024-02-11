@@ -42,6 +42,7 @@ class DatePeriodFragment: DialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         val viewPeriodDialog: View = inflater.inflate(R.layout.fragment_period_date_dialog, container, false)
+//        viewPeriodDialog.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         return viewPeriodDialog
     }
 
