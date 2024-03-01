@@ -10,7 +10,7 @@
 
         <include
             android:id="@+id/customToolbar"
-            layout="@layout/income_type_toolbar"
+            layout="@layout/default_with_back_toolbar"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"></include>

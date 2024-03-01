@@ -6,33 +6,44 @@ import android.content.ClipDescription
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.graphics.Color
+import android.graphics.Point
 import android.os.Bundle
 import android.text.format.DateFormat
 import android.util.Log
 import android.view.DragEvent
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.cardview.widget.CardView
 import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.cashorganizer.Fragment.AddPlanMoneyFragment
 import com.example.cashorganizer.Fragment.CurrentDatePeriodFragment
 import com.example.cashorganizer.Fragment.CustomDatePeriodFragment
 import com.example.cashorganizer.Fragment.DatePeriodFragment
+import com.example.cashorganizer.adapter.PlanMoneyAdapter
 import com.example.cashorganizer.databinding.ActivityMainBinding
+import com.example.cashorganizer.model.CashBoxViewModel
+import com.example.cashorganizer.model.PlanMoneyViewModel
+import com.example.cashorganizer.share.AddPlanMoneyInterface
 import com.example.cashorganizer.share.PeriodDateInterface
 import com.example.cashorganizer.utilities.MyDragShadowBuilder
+import com.example.cashorganizer.utilities.PlanMoneyType
 import com.example.cashorganizer.utilities.RequestCode
-import com.example.cashorganizer.utilities.UtilFunction.Validation.convertValueToFormatMoney
+import com.example.cashorganizer.utilities.UtilFunction.Function.convertValueToFormatMoney
+import com.example.cashorganizer.utilities.UtilFunction.Function.findPositionAtPoint
 import com.google.android.material.card.MaterialCardView
-import java.text.DecimalFormat
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import java.lang.reflect.Type
 import java.text.SimpleDateFormat
 import java.util.Date
 
-class MainActivity : AppCompatActivity(), PeriodDateInterface {
+
+class MainActivity : AppCompatActivity(), PeriodDateInterface, AddPlanMoneyInterface,
+    PlanMoneyAdapter.ItemClickListener {
     private lateinit var binding:ActivityMainBinding
     private lateinit var dialogConfirmCurrentDatePeriod: CurrentDatePeriodFragment
     private lateinit var dialogConfirmCustomDatePeriod: CustomDatePeriodFragment
@@ -44,10 +55,13 @@ class MainActivity : AppCompatActivity(), PeriodDateInterface {
     private lateinit var btnDatePicker: CardView
     private lateinit var cardCashBox: MaterialCardView
     private lateinit var cardAddPlanMoney: CardView
+    private lateinit var recyclerviewPlanMoney: RecyclerView
     private lateinit var sharedPeriodDate : SharedPreferences
     private lateinit var sharedCashBox : SharedPreferences
+    private lateinit var sharedPlanMoney : SharedPreferences
     private lateinit var startDate: Date
     private lateinit var endDate: Date
+    private var planMoneyList: ArrayList<PlanMoneyViewModel> = ArrayList()
     private val fullMonth: List<String> = listOf("มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม")
     private val shortMonth: List<String> = listOf("ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค.")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -80,7 +94,10 @@ class MainActivity : AppCompatActivity(), PeriodDateInterface {
 
         //region Setup view plan money
         cardAddPlanMoney = findViewById(R.id.cardAddPlanMoney)
+        recyclerviewPlanMoney = findViewById(R.id.recyclerviewPlanMoney)
+        recyclerviewPlanMoney.layoutManager = GridLayoutManager(this, 2)
         dialogAddPlanMoney = AddPlanMoneyFragment()
+        sharedPlanMoney = getSharedPreferences("PlanMoneys" , Context.MODE_PRIVATE)
         //endregion
     }
 
@@ -107,8 +124,20 @@ class MainActivity : AppCompatActivity(), PeriodDateInterface {
         //endregion
 
         //region Setup value cash box
-        if (sharedCashBox.getString("IncomeValue", "") != "") {
-            valueCashBox.text = convertValueToFormatMoney(sharedCashBox.getString("IncomeValue", "") ?: "0.00")
+        if (sharedCashBox.getString("CashBoxList", "") != "") {
+            val gson = Gson()
+            val type: Type = object : TypeToken<ArrayList<CashBoxViewModel?>?>() {}.type
+            var cashBoxList: ArrayList<CashBoxViewModel?> = gson.fromJson(sharedCashBox.getString("CashBoxList", ""), type)
+            valueCashBox.text = convertValueToFormatMoney(cashBoxList.sumOf { it!!.incomeValue }.toString())
+        }
+        //endregion
+
+        //region Setup value plan money
+        if (!sharedPlanMoney.getString("PlanMoneys", "").isNullOrEmpty()) {
+            val gson = Gson()
+            val type: Type = object : TypeToken<ArrayList<PlanMoneyViewModel?>?>() {}.type
+            planMoneyList = gson.fromJson(sharedPlanMoney.getString("PlanMoneys", ""), type)
+            setPlanMoneyRecyclerview()
         }
         //endregion
     }
@@ -130,15 +159,17 @@ class MainActivity : AppCompatActivity(), PeriodDateInterface {
         }
         //endregion
 
+        cardCashBox.tag = valueCashBox.text
         //region Setup click cash box
         cardCashBox.setOnLongClickListener { v ->
+            v.tag = valueCashBox.text
             val item = ClipData.Item(v.tag as? CharSequence)
             val dragData = ClipData(
                 v.tag as? CharSequence,
                 arrayOf(ClipDescription.MIMETYPE_TEXT_PLAIN),
                 item)
 
-            val myShadow = MyDragShadowBuilder(v)
+            val myShadow = MyDragShadowBuilder(cardCashBox)
             v.startDragAndDrop(dragData,
                 myShadow,
                 null,
@@ -147,11 +178,10 @@ class MainActivity : AppCompatActivity(), PeriodDateInterface {
             true
         }
 
-        cardCashBox.setOnDragListener { v, e ->
+        recyclerviewPlanMoney.setOnDragListener { v, e ->
             when (e.action) {
                 DragEvent.ACTION_DRAG_STARTED -> {
                     if (e.clipDescription.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
-                        (v as? ImageView)?.setColorFilter(Color.BLUE)
                         v.invalidate()
                         true
                     } else {
@@ -159,36 +189,37 @@ class MainActivity : AppCompatActivity(), PeriodDateInterface {
                     }
                 }
                 DragEvent.ACTION_DRAG_ENTERED -> {
-                    (v as? ImageView)?.setColorFilter(Color.GREEN)
                     v.invalidate()
                     true
                 }
 
-                DragEvent.ACTION_DRAG_LOCATION ->
+                DragEvent.ACTION_DRAG_LOCATION -> {
                     true
+                }
                 DragEvent.ACTION_DRAG_EXITED -> {
-                    (v as? ImageView)?.setColorFilter(Color.BLUE)
                     v.invalidate()
                     true
                 }
                 DragEvent.ACTION_DROP -> {
-                    val item: ClipData.Item = e.clipData.getItemAt(0)
-                    val dragData = item.text
-                    Toast.makeText(this, "Dragged data is $dragData", Toast.LENGTH_LONG).show()
-                    (v as? ImageView)?.clearColorFilter()
+                    val point = Point(e.x.toInt(), e.y.toInt())
+                    val position = findPositionAtPoint(point, recyclerviewPlanMoney)
+                    if (position !== -1) {
+                        val item: ClipData.Item = e.clipData.getItemAt(0)
+                        val dragData = item.text
+                    }
+                    Toast.makeText(this, "Dragged data is $position", Toast.LENGTH_LONG).show()
                     v.invalidate()
                     true
                 }
 
                 DragEvent.ACTION_DRAG_ENDED -> {
-                    (v as? ImageView)?.clearColorFilter()
                     v.invalidate()
                     when(e.result) {
                         true ->
-                            Toast.makeText(this, "The drop was handled.", Toast.LENGTH_LONG)
+                            Log.e("Success", "The drop was handled.")
                         else ->
-                            Toast.makeText(this, "The drop didn't work.", Toast.LENGTH_LONG)
-                    }.show()
+                            Log.e("Fail", "The drop didn't work.")
+                    }
                     true
                 }
                 else -> {
@@ -312,21 +343,64 @@ class MainActivity : AppCompatActivity(), PeriodDateInterface {
                 val incomeDay = data?.getStringExtra("IncomeDay") ?: "0"
                 val incomeMonth = data?.getStringExtra("IncomeMonth") ?: "0"
                 val incomeYear = data?.getStringExtra("IncomeYear") ?: "0"
-                val incomeType = data?.getStringExtra("IncomeType")
-                val categoryType = data?.getStringExtra("CategoryType")
+                val incomeType = data?.getStringExtra("IncomeType") ?: ""
+                val categoryType = data?.getStringExtra("CategoryType") ?: ""
                 val incomeValue = data?.getStringExtra("IncomeValue") ?: "0.00"
-                val incomeDesc = data?.getStringExtra("IncomeDesc")
-                editShareCashBox.putInt("IncomeDay", incomeDay.toInt())
-                editShareCashBox.putInt("IncomeMonth", incomeMonth.toInt())
-                editShareCashBox.putInt("IncomeYear", incomeYear.toInt())
-                editShareCashBox.putString("IncomeType", incomeType)
-                editShareCashBox.putString("CategoryType", categoryType)
-                editShareCashBox.putString("IncomeValue", incomeValue)
-                editShareCashBox.putString("IncomeDesc", incomeDesc)
+                val incomeDesc = data?.getStringExtra("IncomeDesc") ?: ""
+                var cashBoxViewModel = CashBoxViewModel(incomeDay.toInt(), incomeMonth.toInt(), incomeYear.toInt(), incomeType,
+                    categoryType, incomeValue.replace(",", "").toDouble(), incomeDesc)
+                if (!sharedCashBox.getString("CashBoxList", "").isNullOrEmpty()) {
+                    val gson = Gson()
+                    val type: Type = object : TypeToken<ArrayList<CashBoxViewModel?>?>() {}.type
+                    var cashBoxList: ArrayList<CashBoxViewModel?> = gson.fromJson(sharedCashBox.getString("CashBoxList", ""), type)
+                    cashBoxList.add(cashBoxViewModel)
+                    val jsonCashBoxList = gson.toJson(cashBoxList)
+                    editShareCashBox.putString("CashBoxList", jsonCashBoxList)
+                    valueCashBox.text = convertValueToFormatMoney(cashBoxList.sumOf { it!!.incomeValue }.toString())
+                }
+                else {
+                    val gson = Gson()
+                    var cashBoxList: ArrayList<CashBoxViewModel?> = ArrayList()
+                    cashBoxList.add(cashBoxViewModel)
+                    val jsonCashBoxList = gson.toJson(cashBoxList)
+                    editShareCashBox.putString("CashBoxList", jsonCashBoxList)
+                    valueCashBox.text = convertValueToFormatMoney(cashBoxViewModel.incomeValue.toString())
+                }
                 editShareCashBox.apply()
-
-                valueCashBox.text = incomeValue
             }
         }
+        else if (requestCode == RequestCode.Add_PLAN_MONEY) {
+            if (resultCode == Activity.RESULT_OK) {
+                val planMoneyModel = data?.getSerializableExtra("PlanMoneyModel") as PlanMoneyViewModel
+                planMoneyList.add(planMoneyModel)
+                val editPlanMoney = sharedPlanMoney.edit()
+                val gson = Gson()
+                val jsonPlanMoneyList = gson.toJson(planMoneyList)
+                editPlanMoney.putString("PlanMoneys", jsonPlanMoneyList);
+                editPlanMoney.apply()
+                setPlanMoneyRecyclerview()
+            }
+        }
+    }
+
+    private fun setPlanMoneyRecyclerview() {
+        val adapterPlanMoney = PlanMoneyAdapter(planMoneyList, this)
+        recyclerviewPlanMoney.adapter = adapterPlanMoney
+    }
+
+    override fun onClickAddIncome() {
+        val intent = Intent(this, AddPlanMoney::class.java)
+        intent.putExtra("PlanMoneyType", PlanMoneyType.INCOME_TYPE)
+        startActivityForResult(intent, RequestCode.Add_PLAN_MONEY)
+    }
+
+    override fun onClickAddExpenses() {
+        val intent = Intent(this, AddPlanMoney::class.java)
+        intent.putExtra("PlanMoneyType", PlanMoneyType.EXPENSES_TYPE)
+        startActivityForResult(intent, RequestCode.Add_PLAN_MONEY)
+    }
+
+    override fun onItemClick(position: Int) {
+
     }
 }

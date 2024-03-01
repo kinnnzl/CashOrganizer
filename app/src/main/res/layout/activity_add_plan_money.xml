@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".AddPlanMoney">
+
+    <include
+        android:id="@+id/customToolbar"
+        layout="@layout/default_with_back_toolbar">
+
+    </include>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="60dp"
+        android:paddingEnd="60dp"
+        android:paddingTop="20dp"
+        android:orientation="vertical">
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:strokeColor="@color/black">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/rowIncomeType"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_weight="1"
+                    android:padding="8dp">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardAddIconPlanMoney"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:backgroundTint="@color/white"
+                        app:cardCornerRadius="25dp"
+                        android:layout_marginLeft="15dp"
+                        app:strokeWidth="1dp"
+                        app:strokeColor="@color/black">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/icAddIconPlanMoney"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:src="@drawable/baseline_add_circle_"
+                            android:layout_margin="8dp"
+                            android:tint="@color/green">
+                        </androidx.appcompat.widget.AppCompatImageView>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <TextView
+                        android:id="@+id/txtHeaderPlanMoney"
+                        android:layout_width="0dp"
+                        android:layout_weight=".80"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginLeft="15dp"
+                        android:text="ชื่อ PLAN MONEY"
+                        android:textColor="@color/gray1"
+                        android:textAlignment="center"
+                        android:gravity="center"
+                        android:textSize="16sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/cardAmountPlanMoney"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        app:cardCornerRadius="10dp"
+                        app:cardBackgroundColor="@color/green">
+
+                        <TextView
+                            android:id="@+id/txtAmountPlanMoney"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginLeft="15dp"
+                            android:text="0.00"
+                            android:textColor="@color/white"
+                            android:textAlignment="textEnd"
+                            android:gravity="center|end"
+                            android:textStyle="bold"
+                            android:layout_marginEnd="15dp"
+                            android:textSize="18sp" />
+
+                    </androidx.cardview.widget.CardView>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:layout_marginTop="20dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txtLabelPlanMoney"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="2dp"
+            android:text="ชื่อ PLAN MONEY"
+            android:textColor="@color/black"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:textSize="16sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/valuePlanMoneyName"
+                android:layout_width="0dp"
+                android:layout_weight=".90"
+                android:layout_height="48dp"
+                android:textSize="16sp"
+                android:hint="ชื่อ PLAN MONEY">
+
+            </EditText>
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/icClosePlanMoneyName"
+                android:layout_width="0dp"
+                android:layout_weight=".10"
+                android:layout_height="match_parent"
+                android:src="@drawable/baseline_close"
+                android:layout_margin="10dp"
+                android:tint="@color/black">
+            </androidx.appcompat.widget.AppCompatImageView>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp">
+
+        <CheckBox
+            android:id="@+id/checkBoxTarget"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ตั้งเป้าหมาย"></CheckBox>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layoutSetTarget"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="15dp"
+        android:visibility="gone"
+        android:paddingEnd="15dp">
+
+        <EditText
+            android:id="@+id/valueTargetPlanMoney"
+            android:layout_width="match_parent"
+            android:inputType="numberDecimal"
+            android:layout_height="48dp"
+            android:textSize="16sp"
+            android:hint="0.00">
+
+        </EditText>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center|bottom"
+        android:orientation="vertical" >
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSavePlanMoney"
+            android:layout_width="145dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:textColor="@color/black"
+            app:cornerRadius="5dp"
+            android:backgroundTint="@color/gray"
+            android:layout_gravity="center_horizontal|center"
+            android:text="บันทึก" />
+    </LinearLayout>
+
+</LinearLayout>

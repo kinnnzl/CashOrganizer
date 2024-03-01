@@ -1,8 +1,10 @@
 package com.example.cashorganizer.utilities
 
+import android.graphics.Point
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
+import androidx.recyclerview.widget.RecyclerView
 import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
@@ -33,6 +35,16 @@ class UtilFunction {
             return result
         }
 
+        fun validatePlanMoney(planMoneyName: String, isTarget: Boolean, valueTargetPlanMoney: String): String {
+            var result = ""
+            if (planMoneyName.isNullOrBlank()) result = "กรุณากรอกชื่อ PLAN MONEY"
+            if (isTarget && valueTargetPlanMoney.isNullOrBlank()) result = "$result \nและ จำนวนเงินเงินที่ตั้งเป้าหมาย"
+            return result
+        }
+    }
+
+    object Function {
+        @JvmStatic
         fun convertValueToFormatMoney(amount: String): String {
             val formatter = DecimalFormat("###,###,##0.00")
             return formatter.format(amount.toDouble())
@@ -65,6 +77,16 @@ class UtilFunction {
                 }
             })
 
+        }
+
+        fun findPositionAtPoint(point: Point, recyclerView: RecyclerView): Int {
+            val location = IntArray(2)
+            recyclerView.getLocationOnScreen(location)
+            val child = recyclerView.findChildViewUnder(point.x.toFloat(), point.y.toFloat())
+            return if (child !== null) recyclerView.getChildAdapterPosition(child)
+            else {
+                -1
+            }
         }
     }
 }

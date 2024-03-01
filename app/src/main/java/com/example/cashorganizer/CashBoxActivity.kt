@@ -13,7 +13,7 @@ import com.example.cashorganizer.databinding.ActivityCashBoxBinding
 import com.example.cashorganizer.share.IncomeDateInterface
 import com.example.cashorganizer.utilities.RequestCode
 import com.example.cashorganizer.utilities.UtilFunction
-import com.example.cashorganizer.utilities.UtilFunction.Validation.addCurrencyFormatter
+import com.example.cashorganizer.utilities.UtilFunction.Function.addCurrencyFormatter
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 

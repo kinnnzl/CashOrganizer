@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:backgroundTint="@color/white"
-            app:cardCornerRadius="50dp"
+            app:cardCornerRadius="40dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cashBoxToolbar"
@@ -163,19 +163,17 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSaveIncome"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/gray"
             android:text="บันทึก"
             android:textColor="@color/black"
-            app:strokeColor="@color/black"
             app:cornerRadius="8dp"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:backgroundTint="@color/gray"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editText"
-            app:layout_constraintVertical_bias="0.07999998">
+            app:strokeColor="@color/black">
 
         </com.google.android.material.button.MaterialButton>
 

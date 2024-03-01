@@ -1,89 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView
+    android:id="@+id/mainRowPlanMoney"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
-    app:cardElevation="5dp">
+    app:cardElevation="2dp">
 
     <LinearLayout
+        android:id="@+id/rowPlanMoney"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <LinearLayout
-            android:id="@+id/rowIncomeType"
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:layout_weight="1"
-            android:padding="5dp">
+            app:cardCornerRadius="15dp">
 
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardMoneyBag"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@color/white"
-                app:cardCornerRadius="50dp"
-                android:layout_marginLeft="15dp"
-                app:strokeColor="@color/black">
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/icPlanMoney"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/ic_statement"
-                    android:layout_margin="5dp"
-                    android:tint="@color/black">
-                </androidx.appcompat.widget.AppCompatImageView>
-
-            </com.google.android.material.card.MaterialCardView>
-
-            <TextView
-                android:id="@+id/txtHeaderPlanMoney"
-                android:layout_width="0dp"
-                android:layout_weight=".80"
-                android:layout_height="match_parent"
-                android:layout_marginStart="10dp"
-                android:layout_marginLeft="15dp"
-                android:text="เงินเก็บห้ามใช้"
-                android:textColor="@color/black"
-                android:textAlignment="center"
-                android:gravity="center"
-                android:textSize="16sp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardAmountPlanMoney"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="35dp"
-                android:backgroundTint="@color/green">
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/txtAmountPlanMoney"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginLeft="15dp"
-                    android:text="0.00 / 10000.00"
-                    android:textColor="@color/white"
-                    android:textAlignment="center"
-                    android:gravity="center"
-                    android:textStyle="bold"
-                    android:layout_marginEnd="15dp"
-                    android:textSize="18sp" />
+                    android:orientation="horizontal"
+                    android:layout_weight="1"
+                    android:padding="5dp">
 
-            </androidx.cardview.widget.CardView>
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardPlanMoney"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:backgroundTint="@color/white"
+                        app:cardCornerRadius="15dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_marginLeft="15dp"
+                        app:strokeColor="@color/black">
 
-        </LinearLayout>
+                        <ImageView
+                            android:id="@+id/icPlanMoney"
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:src="@drawable/ic_statement"
+                            app:srcCompat="@drawable/ic_statement"
+                            android:layout_margin="6dp">
+                        </ImageView>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <TextView
+                        android:id="@+id/txtHeaderPlanMoney"
+                        android:layout_width="0dp"
+                        android:layout_weight=".80"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginLeft="15dp"
+                        android:text="เงินเก็บห้ามใช้"
+                        android:textColor="@color/black"
+                        android:textAlignment="center"
+                        android:gravity="center"
+                        android:textSize="16sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/cardAmountPlanMoney"
+                        android:layout_width="match_parent"
+                        android:layout_height="35dp"
+                        app:cardCornerRadius="10dp"
+                        app:cardBackgroundColor="@color/green">
+
+                        <TextView
+                            android:id="@+id/txtAmountPlanMoney"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginLeft="15dp"
+                            android:text="0.00 / 10000.00"
+                            android:textColor="@color/white"
+                            android:textAlignment="center"
+                            android:gravity="center"
+                            android:textStyle="bold"
+                            android:layout_marginEnd="15dp"
+                            android:textSize="18sp" />
+
+                    </androidx.cardview.widget.CardView>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
 
     </LinearLayout>
 
