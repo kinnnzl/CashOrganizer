@@ -88,8 +88,9 @@ class AddPlanMoney : AppCompatActivity() {
             if (validateMessage.isNotEmpty())
                 Toast.makeText(this,"$validateMessage!", Toast.LENGTH_SHORT).show();
             else {
+                val valueTarget = if (valueTargetPlanMoney.text.isNullOrEmpty()) "0.00" else valueTargetPlanMoney.text.toString().replace(",", "")
                 val planMoneyModel = PlanMoneyViewModel(valuePlanMoneyName.text.toString(), 0.00, checkBoxTarget.isChecked,
-                    valueTargetPlanMoney.text.toString().replace(",", "").toDouble(), planMoneyType)
+                    valueTarget.toDouble(), planMoneyType)
                 val intent = Intent()
                 intent.putExtra("PlanMoneyModel", planMoneyModel)
                 setResult(RESULT_OK, intent);

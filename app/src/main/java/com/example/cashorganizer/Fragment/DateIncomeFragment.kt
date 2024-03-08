@@ -13,7 +13,6 @@ import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import com.example.cashorganizer.R
 import com.example.cashorganizer.share.IncomeDateInterface
-import com.example.cashorganizer.share.PeriodDateInterface
 import com.google.android.material.button.MaterialButton
 import java.util.Calendar
 
@@ -30,8 +29,7 @@ class DateIncomeFragment: DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val viewPeriodDialog: View = inflater.inflate(R.layout.fragment_incom_date_dialog, container, false)
-        return viewPeriodDialog
+        return inflater.inflate(R.layout.fragment_incom_date_dialog, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -3,6 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
+    android:backgroundTint="@color/white"
+    android:background="@drawable/layout_border_radius"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -116,6 +118,7 @@
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
                 android:textSize="12sp"
+                android:textColor="@color/black"
                 android:textAlignment="center"
                 android:text="Cashbox">
             </TextView>
@@ -125,6 +128,7 @@
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
                 android:textSize="12sp"
+                android:textColor="@color/black"
                 android:textAlignment="center"
                 android:text="6,000">
             </TextView>
@@ -159,6 +163,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="12sp"
                 android:textAlignment="center"
+                android:textColor="@color/black"
                 android:text="บัตรเครดิต">
             </TextView>
 
@@ -186,7 +191,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="14dp"
-                android:text="จำนวนเเงิน">
+                android:textColor="@color/black"
+                android:text="จำนวนเงิน">
 
             </TextView>
 
@@ -201,11 +207,12 @@
 
             <EditText
                 android:id="@+id/inputValueTransfer"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
                 android:layout_weight=".80"
                 android:hint="0.00"
-                android:inputType="numberDecimal"
-                android:layout_height="match_parent">
+                android:textColor="@color/black"
+                android:inputType="numberDecimal">
 
             </EditText>
 
@@ -217,6 +224,7 @@
                 android:gravity="bottom"
                 android:textSize="14sp"
                 android:paddingBottom="5dp"
+                android:textColor="@color/black"
                 android:paddingStart="5dp"
                 android:text="ทั้งหมด">
 

@@ -23,17 +23,20 @@ import com.example.cashorganizer.Fragment.AddPlanMoneyFragment
 import com.example.cashorganizer.Fragment.CurrentDatePeriodFragment
 import com.example.cashorganizer.Fragment.CustomDatePeriodFragment
 import com.example.cashorganizer.Fragment.DatePeriodFragment
+import com.example.cashorganizer.Fragment.TransferCashBoxFragment
 import com.example.cashorganizer.adapter.PlanMoneyAdapter
 import com.example.cashorganizer.databinding.ActivityMainBinding
 import com.example.cashorganizer.model.CashBoxViewModel
 import com.example.cashorganizer.model.PlanMoneyViewModel
 import com.example.cashorganizer.share.AddPlanMoneyInterface
 import com.example.cashorganizer.share.PeriodDateInterface
+import com.example.cashorganizer.share.TransferCashBoxInterface
 import com.example.cashorganizer.utilities.MyDragShadowBuilder
 import com.example.cashorganizer.utilities.PlanMoneyType
 import com.example.cashorganizer.utilities.RequestCode
 import com.example.cashorganizer.utilities.UtilFunction.Function.convertValueToFormatMoney
 import com.example.cashorganizer.utilities.UtilFunction.Function.findPositionAtPoint
+import com.example.cashorganizer.utilities.UtilFunction.Function.replaceFormatMoney
 import com.google.android.material.card.MaterialCardView
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -42,19 +45,21 @@ import java.text.SimpleDateFormat
 import java.util.Date
 
 
-class MainActivity : AppCompatActivity(), PeriodDateInterface, AddPlanMoneyInterface,
+class MainActivity : AppCompatActivity(), PeriodDateInterface, AddPlanMoneyInterface, TransferCashBoxInterface,
     PlanMoneyAdapter.ItemClickListener {
     private lateinit var binding:ActivityMainBinding
     private lateinit var dialogConfirmCurrentDatePeriod: CurrentDatePeriodFragment
     private lateinit var dialogConfirmCustomDatePeriod: CustomDatePeriodFragment
     private lateinit var dialogAddPlanMoney: AddPlanMoneyFragment
     private lateinit var dialogDatePeriod: DatePeriodFragment
+    private lateinit var dialogTransferCashBox: TransferCashBoxFragment
     private lateinit var btnAddCashBox: AppCompatImageView
     private lateinit var txtPeriod: TextView
     private lateinit var valueCashBox: TextView
     private lateinit var btnDatePicker: CardView
     private lateinit var cardCashBox: MaterialCardView
     private lateinit var cardAddPlanMoney: CardView
+    private lateinit var txtValueSummaryIncome: TextView
     private lateinit var recyclerviewPlanMoney: RecyclerView
     private lateinit var sharedPeriodDate : SharedPreferences
     private lateinit var sharedCashBox : SharedPreferences
@@ -99,6 +104,12 @@ class MainActivity : AppCompatActivity(), PeriodDateInterface, AddPlanMoneyInter
         dialogAddPlanMoney = AddPlanMoneyFragment()
         sharedPlanMoney = getSharedPreferences("PlanMoneys" , Context.MODE_PRIVATE)
         //endregion
+
+        dialogTransferCashBox = TransferCashBoxFragment()
+
+        //region Setup view summary
+        txtValueSummaryIncome = findViewById(R.id.txtValueSummaryIncome)
+        //endregion
     }
 
     private fun setupValue() {
@@ -124,11 +135,8 @@ class MainActivity : AppCompatActivity(), PeriodDateInterface, AddPlanMoneyInter
         //endregion
 
         //region Setup value cash box
-        if (sharedCashBox.getString("CashBoxList", "") != "") {
-            val gson = Gson()
-            val type: Type = object : TypeToken<ArrayList<CashBoxViewModel?>?>() {}.type
-            var cashBoxList: ArrayList<CashBoxViewModel?> = gson.fromJson(sharedCashBox.getString("CashBoxList", ""), type)
-            valueCashBox.text = convertValueToFormatMoney(cashBoxList.sumOf { it!!.incomeValue }.toString())
+        if (sharedCashBox.getString("CashBoxSummary", "") != "") {
+            valueCashBox.text = convertValueToFormatMoney(sharedCashBox.getString("CashBoxSummary", "") ?: "")
         }
         //endregion
 
@@ -140,6 +148,19 @@ class MainActivity : AppCompatActivity(), PeriodDateInterface, AddPlanMoneyInter
             setPlanMoneyRecyclerview()
         }
         //endregion
+
+        //region Setup value summary
+        setValueSummaryIncome()
+        //endregion
+    }
+
+    private fun setValueSummaryIncome() {
+        if (!sharedCashBox.getString("CashBoxList", "").isNullOrEmpty()) {
+            val gson = Gson()
+            val type: Type = object : TypeToken<ArrayList<CashBoxViewModel?>?>() {}.type
+            var cashBoxList: ArrayList<CashBoxViewModel?> = gson.fromJson(sharedCashBox.getString("CashBoxList", ""), type)
+            txtValueSummaryIncome.text = convertValueToFormatMoney(cashBoxList.sumOf { it?.incomeValue ?: 0.00 }.toString())
+        }
     }
 
     private fun setupClickListeners() {
@@ -205,9 +226,16 @@ class MainActivity : AppCompatActivity(), PeriodDateInterface, AddPlanMoneyInter
                     val position = findPositionAtPoint(point, recyclerviewPlanMoney)
                     if (position !== -1) {
                         val item: ClipData.Item = e.clipData.getItemAt(0)
-                        val dragData = item.text
+                        var planMoneyListForTransfer = ""
+                        val bundle = Bundle()
+                        if (!sharedPlanMoney.getString("PlanMoneys", "").isNullOrEmpty())
+                            planMoneyListForTransfer = sharedPlanMoney.getString("PlanMoneys", "") ?: ""
+                        bundle.putInt("IndexTransferPlanMoney", position)
+                        bundle.putString("ValueCashBox", item.text.toString())
+                        bundle.putString("PlanMoneyList", planMoneyListForTransfer)
+                        dialogTransferCashBox.arguments = bundle
+                        openDialogTransferCashBox()
                     }
-                    Toast.makeText(this, "Dragged data is $position", Toast.LENGTH_LONG).show()
                     v.invalidate()
                     true
                 }
@@ -253,6 +281,10 @@ class MainActivity : AppCompatActivity(), PeriodDateInterface, AddPlanMoneyInter
 
     private fun openConfirmCustomDate() {
         dialogConfirmCustomDatePeriod.show(supportFragmentManager, "dialogConfirmCustomDatePeriod")
+    }
+
+    private fun openDialogTransferCashBox() {
+        dialogTransferCashBox.show(supportFragmentManager, "dialogTransferCashBox")
     }
 
     override fun transferCurrentDate(currentDay: String, currentMonth: Int, currentYear: String) {
@@ -348,25 +380,31 @@ class MainActivity : AppCompatActivity(), PeriodDateInterface, AddPlanMoneyInter
                 val incomeValue = data?.getStringExtra("IncomeValue") ?: "0.00"
                 val incomeDesc = data?.getStringExtra("IncomeDesc") ?: ""
                 var cashBoxViewModel = CashBoxViewModel(incomeDay.toInt(), incomeMonth.toInt(), incomeYear.toInt(), incomeType,
-                    categoryType, incomeValue.replace(",", "").toDouble(), incomeDesc)
+                    categoryType, replaceFormatMoney(incomeValue).toDouble(), incomeDesc)
+                var cashBoxSummary = sharedCashBox.getString("CashBoxSummary", "")
                 if (!sharedCashBox.getString("CashBoxList", "").isNullOrEmpty()) {
                     val gson = Gson()
                     val type: Type = object : TypeToken<ArrayList<CashBoxViewModel?>?>() {}.type
                     var cashBoxList: ArrayList<CashBoxViewModel?> = gson.fromJson(sharedCashBox.getString("CashBoxList", ""), type)
                     cashBoxList.add(cashBoxViewModel)
                     val jsonCashBoxList = gson.toJson(cashBoxList)
+                    cashBoxSummary = (replaceFormatMoney(cashBoxSummary.toString()).toDouble() + cashBoxViewModel.incomeValue).toString()
                     editShareCashBox.putString("CashBoxList", jsonCashBoxList)
-                    valueCashBox.text = convertValueToFormatMoney(cashBoxList.sumOf { it!!.incomeValue }.toString())
+                    editShareCashBox.putString("CashBoxSummary", cashBoxSummary)
+                    valueCashBox.text = convertValueToFormatMoney(cashBoxSummary)
                 }
                 else {
                     val gson = Gson()
                     var cashBoxList: ArrayList<CashBoxViewModel?> = ArrayList()
                     cashBoxList.add(cashBoxViewModel)
                     val jsonCashBoxList = gson.toJson(cashBoxList)
+                    cashBoxSummary = cashBoxViewModel.incomeValue.toString()
                     editShareCashBox.putString("CashBoxList", jsonCashBoxList)
-                    valueCashBox.text = convertValueToFormatMoney(cashBoxViewModel.incomeValue.toString())
+                    editShareCashBox.putString("CashBoxSummary", cashBoxSummary)
+                    valueCashBox.text = convertValueToFormatMoney(cashBoxSummary)
                 }
                 editShareCashBox.apply()
+                setValueSummaryIncome()
             }
         }
         else if (requestCode == RequestCode.Add_PLAN_MONEY) {
@@ -402,5 +440,32 @@ class MainActivity : AppCompatActivity(), PeriodDateInterface, AddPlanMoneyInter
 
     override fun onItemClick(position: Int) {
 
+    }
+
+    override fun transferCashBoxToPlanMoney(indexPlanMoney: Int, valueTransfer: String) {
+        val getPlanMoneys = sharedPlanMoney.getString("PlanMoneys", "")
+        val getCashBoxSummary = sharedCashBox.getString("CashBoxSummary", "")
+        if (!getPlanMoneys.isNullOrEmpty() && !getCashBoxSummary.isNullOrEmpty()) {
+            val gson = Gson()
+            val type: Type = object : TypeToken<ArrayList<PlanMoneyViewModel?>?>() {}.type
+            planMoneyList = gson.fromJson(getPlanMoneys, type)
+            if (planMoneyList.isNotEmpty() && indexPlanMoney != -1) {
+                planMoneyList[indexPlanMoney].amount = planMoneyList[indexPlanMoney].amount + replaceFormatMoney(valueTransfer).toDouble()
+                valueCashBox.text = convertValueToFormatMoney((replaceFormatMoney(getCashBoxSummary).toDouble()
+                        - replaceFormatMoney(valueTransfer).toDouble()).toString())
+
+                val editPlanMoney = sharedPlanMoney.edit()
+                val gson = Gson()
+                val jsonPlanMoneyList = gson.toJson(planMoneyList)
+                editPlanMoney.putString("PlanMoneys", jsonPlanMoneyList);
+                editPlanMoney.apply()
+
+                val editCashBox = sharedCashBox.edit()
+                editCashBox.putString("CashBoxSummary", replaceFormatMoney(valueCashBox.text.toString()));
+                editCashBox.apply()
+
+                setPlanMoneyRecyclerview()
+            }
+        }
     }
 }

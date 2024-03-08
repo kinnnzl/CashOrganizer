@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
     xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -23,7 +24,7 @@
             android:layout_marginStart="60dp"
             android:layout_marginTop="25dp"
             android:layout_marginEnd="60dp"
-            android:backgroundTint="@color/gray"
+            android:backgroundTint="@color/yellow_light"
             app:cardCornerRadius="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -42,6 +43,7 @@
                     android:layout_height="wrap_content"
                     android:text="เลือกช่วงเวลาที่ต้องการบันทึก"
                     android:textSize="16dp"
+                    android:textColor="@color/black"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -92,6 +94,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:text="Cashbox"
+                    android:textColor="@color/black"
                     android:textSize="16sp"
                     app:layout_constraintStart_toEndOf="@+id/icCashBox"
                     app:layout_constraintTop_toTopOf="@+id/icCashBox">
@@ -103,6 +106,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0.00"
+                    android:textColor="@color/black"
                     android:textSize="20sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="@+id/txtCashBox"
@@ -131,6 +135,7 @@
                     android:text="กดค้างและลาก\nเพื่อจัดสรร"
                     android:textAlignment="center"
                     android:textSize="8sp"
+                    android:textColor="@color/black"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/icDragAndDrop"
                     app:layout_constraintStart_toStartOf="@+id/icDragAndDrop"
@@ -158,168 +163,19 @@
 
         </androidx.appcompat.widget.AppCompatImageView>
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardIncomeAndExpenses"
-            android:layout_width="match_parent"
-            android:layout_height="35dp"
-            android:layout_marginStart="60dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginEnd="60dp"
-            android:backgroundTint="@color/white"
-            app:cardCornerRadius="10dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cardCashbox"
-            app:strokeColor="@color/black">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="4dp">
-
-                <TextView
-                    android:id="@+id/txtIncomeAndExpenses"
-                    style="@style/TextAppearance.MaterialComponents.Headline3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="รายรับ - ค่าใช้จ่าย"
-                    android:textSize="16dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:ignore="MissingConstraints" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constraintLayout3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="35dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginEnd="35dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cardIncomeAndExpenses">
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardSummaryIncome"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
-                android:backgroundTint="@color/white"
-                app:cardCornerRadius="10dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/cardSummaryExpenses"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:strokeColor="@color/black">
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp">
-
-                    <TextView
-                        android:id="@+id/txtValueSummaryIncome"
-                        style="@style/TextAppearance.MaterialComponents.Headline3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="0.00"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:ignore="MissingConstraints" />
-
-                    <TextView
-                        android:id="@+id/txtSummaryIncome"
-                        style="@style/TextAppearance.MaterialComponents.Headline3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="รายรับ"
-                        android:textSize="16dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="@+id/txtValueSummaryIncome"
-                        app:layout_constraintStart_toStartOf="@+id/txtValueSummaryIncome"
-                        app:layout_constraintTop_toBottomOf="@+id/txtValueSummaryIncome"
-                        tools:ignore="MissingConstraints" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardSummaryExpenses"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:backgroundTint="@color/white"
-                app:cardCornerRadius="10dp"
-                app:layout_constraintBottom_toBottomOf="@+id/cardSummaryIncome"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/cardSummaryIncome"
-                app:layout_constraintTop_toTopOf="parent"
-                app:strokeColor="@color/black">
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp">
-
-                    <TextView
-                        android:id="@+id/txtValueSummaryExpenses"
-                        style="@style/TextAppearance.MaterialComponents.Headline3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="0.00"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:ignore="MissingConstraints" />
-
-                    <TextView
-                        android:id="@+id/txtSummaryExpenses"
-                        style="@style/TextAppearance.MaterialComponents.Headline3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="ค่าใช้จ่าย"
-                        android:textSize="16dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="@+id/txtValueSummaryExpenses"
-                        app:layout_constraintStart_toStartOf="@+id/txtValueSummaryExpenses"
-                        app:layout_constraintTop_toBottomOf="@+id/txtValueSummaryExpenses"
-                        tools:ignore="MissingConstraints" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
         <androidx.cardview.widget.CardView
             android:id="@+id/cardAddPlanMoney"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:backgroundTint="@color/gray"
-            app:layout_constraintStart_toStartOf="@+id/constraintLayout3"
-            app:layout_constraintTop_toBottomOf="@+id/constraintLayout3">
+            app:layout_constraintStart_toStartOf="@+id/cardCashbox"
+            app:layout_constraintTop_toBottomOf="@+id/cardCashbox">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@color/yellow_light"
                 android:padding="5dp">
 
                 <TextView
@@ -327,8 +183,9 @@
                     style="@style/TextAppearance.MaterialComponents.Headline3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="เพิ่ม PLAN MONEY +"
+                    android:text="เพิ่ม Clound Pocket +"
                     android:textSize="12sp"
+                    android:textColor="@color/black"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -351,8 +208,8 @@
             android:textColor="@color/black"
             android:textSize="10sp"
             app:cornerRadius="5dp"
-            app:layout_constraintEnd_toEndOf="@+id/constraintLayout3"
-            app:layout_constraintTop_toBottomOf="@+id/constraintLayout3"/>
+            app:layout_constraintEnd_toEndOf="@+id/cardCashbox"
+            app:layout_constraintTop_toBottomOf="@+id/cardCashbox"/>
 
         <ScrollView
             android:id="@+id/scrollViewPlanMoney"
@@ -369,21 +226,124 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/layoutScrollViewPlanMoney"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerviewPlanMoney"
-                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:paddingStart="28dp"
+                    android:paddingEnd="28dp"
+                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    android:paddingStart="28dp"
-                    android:paddingEnd="28dp"
-                    tools:itemCount="5"
                     app:spanCount="2"
+                    tools:itemCount="5"
                     tools:listitem="@layout/plan_money_card_view" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/constraintLayout3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="35dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="35dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/recyclerviewPlanMoney">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardSummaryIncome"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/white"
+                        app:cardCornerRadius="10dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:strokeColor="@color/black">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/white"
+                            android:backgroundTint="@color/white"
+                            android:padding="5dp"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/txtHeaderSummaryIncome"
+                                style="@style/TextAppearance.MaterialComponents.Headline3"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="รวมยอดเงินทั้งหมดของ Cashbox"
+                                android:textSize="14sp"
+                                android:textColor="@color/black"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/txtValueSummaryIncome"
+                                style="@style/TextAppearance.MaterialComponents.Headline3"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:paddingEnd="5dp"
+                                android:textAlignment="textEnd"
+                                android:text="0.00"
+                                android:textSize="24sp"
+                                android:textColor="@color/black" />
+
+                        </LinearLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardSummaryExpenses"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:backgroundTint="@color/white"
+                        app:cardCornerRadius="10dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/cardSummaryIncome"
+                        app:strokeColor="@color/black">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/white"
+                            android:backgroundTint="@color/white"
+                            android:padding="5dp"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/txtHeaderSummaryExpenses"
+                                style="@style/TextAppearance.MaterialComponents.Headline3"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="รวมยอดเงินทั้งหมดของ Clound Pocket"
+                                android:textSize="14sp"
+                                android:textColor="@color/black"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/txtSummaryExpenses"
+                                style="@style/TextAppearance.MaterialComponents.Headline3"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:paddingEnd="5dp"
+                                android:textAlignment="textEnd"
+                                android:text="0.00"
+                                android:textSize="24sp"
+                                android:textColor="@color/black" />
+
+                        </LinearLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

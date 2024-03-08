@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
+    android:backgroundTint="@color/white"
     xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -26,6 +28,8 @@
             android:gravity="top"
             android:hint="ค้นหา"
             android:focusable="false"
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"
             android:padding="10dp"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -41,6 +45,8 @@
             android:layout_marginTop="20dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            android:background="@color/white"
+            android:backgroundTint="@color/white"
             app:layout_constraintTop_toBottomOf="@+id/searchIncomeType"
             tools:itemCount="5"
             tools:listitem="@layout/income_type_card_view" />

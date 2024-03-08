@@ -8,6 +8,8 @@
     android:layout_marginBottom="5dp"
     android:layout_marginStart="10dp"
     android:layout_marginEnd="10dp"
+    android:background="@color/white"
+    android:backgroundTint="@color/white"
     app:cardElevation="5dp">
 
     <LinearLayout
@@ -15,6 +17,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"
+        android:background="@color/white"
+        android:backgroundTint="@color/white"
         android:padding="5dp">
 
         <TextView
@@ -24,6 +28,7 @@
             android:layout_marginStart="10dp"
             android:layout_marginLeft="15dp"
             android:text="Item"
+            android:textColor="@color/black"
             android:textAlignment="center"
             android:gravity="center"
             android:textSize="16sp" />

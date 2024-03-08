@@ -33,6 +33,7 @@
             android:layout_marginStart="40dp"
             android:layout_marginBottom="10dp"
             android:text="วันที่เริ่มต้น"
+            android:textColor="@color/black"
             android:textSize="16dp"
             app:layout_constraintBottom_toTopOf="@+id/txtEndDate"
             app:layout_constraintStart_toStartOf="parent"
@@ -78,6 +79,7 @@
             android:layout_marginStart="40dp"
             android:text="วันที่สิ้นสุด"
             android:textSize="16dp"
+            android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/txtStartDate"
             app:layout_constraintStart_toStartOf="parent" />

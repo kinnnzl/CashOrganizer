@@ -41,13 +41,26 @@ class UtilFunction {
             if (isTarget && valueTargetPlanMoney.isNullOrBlank()) result = "$result \nและ จำนวนเงินเงินที่ตั้งเป้าหมาย"
             return result
         }
+
+        fun validateTransferCashBox(value: String, targetValue: String): String {
+            var result = ""
+            var valueTransfer = value.replace(",", "").toDouble()
+            var valueCashBox = targetValue.replace(",", "").toDouble()
+            if (valueTransfer > valueCashBox) result = "จำนวนเงินไม่พอ"
+            return result
+        }
     }
 
     object Function {
         @JvmStatic
         fun convertValueToFormatMoney(amount: String): String {
+            amount?.replace(",", "")?.replace("฿", "")
             val formatter = DecimalFormat("###,###,##0.00")
             return formatter.format(amount.toDouble())
+        }
+
+        fun replaceFormatMoney(value: String): String {
+            return value.replace(",", "").replace("฿", "")
         }
 
         fun EditText.addCurrencyFormatter() {
@@ -67,7 +80,7 @@ class UtilFunction {
                         val cleanString = s.toString().replace("\\D".toRegex(), "")
                         val parsed = if (cleanString.isBlank()) 0.0 else cleanString.toDouble()
                         val formated = NumberFormat.getCurrencyInstance()
-                            .format(parsed / 100).replace("$", "")
+                            .format(parsed / 100).replace("$", "").replace("฿", "")
 
                         current = formated
                         this@addCurrencyFormatter.setText(formated)
