@@ -11,8 +11,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.cashorganizer.adapter.IncomeTypeAdapter
 import com.example.cashorganizer.databinding.ActivityIncomeTypeBinding
 import com.example.cashorganizer.model.IncomeTypeViewModel
-import com.example.cashorganizer.share.IncomeTypeInterface
-import com.example.cashorganizer.share.PeriodDateInterface
 
 
 class IncomeTypeActivity : AppCompatActivity(), IncomeTypeAdapter.ItemClickListener {
