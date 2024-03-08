@@ -19,7 +19,6 @@ import androidx.cardview.widget.CardView
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.cashorganizer.Fragment.AddPlanMoneyFragment
 import com.example.cashorganizer.Fragment.CurrentDatePeriodFragment
 import com.example.cashorganizer.Fragment.CustomDatePeriodFragment
 import com.example.cashorganizer.Fragment.DatePeriodFragment
@@ -28,7 +27,6 @@ import com.example.cashorganizer.adapter.PlanMoneyAdapter
 import com.example.cashorganizer.databinding.ActivityMainBinding
 import com.example.cashorganizer.model.CashBoxViewModel
 import com.example.cashorganizer.model.PlanMoneyViewModel
-import com.example.cashorganizer.share.AddPlanMoneyInterface
 import com.example.cashorganizer.share.PeriodDateInterface
 import com.example.cashorganizer.share.TransferCashBoxInterface
 import com.example.cashorganizer.utilities.MyDragShadowBuilder
@@ -45,12 +43,11 @@ import java.text.SimpleDateFormat
 import java.util.Date
 
 
-class MainActivity : AppCompatActivity(), PeriodDateInterface, AddPlanMoneyInterface, TransferCashBoxInterface,
+class MainActivity : AppCompatActivity(), PeriodDateInterface, TransferCashBoxInterface,
     PlanMoneyAdapter.ItemClickListener {
     private lateinit var binding:ActivityMainBinding
     private lateinit var dialogConfirmCurrentDatePeriod: CurrentDatePeriodFragment
     private lateinit var dialogConfirmCustomDatePeriod: CustomDatePeriodFragment
-    private lateinit var dialogAddPlanMoney: AddPlanMoneyFragment
     private lateinit var dialogDatePeriod: DatePeriodFragment
     private lateinit var dialogTransferCashBox: TransferCashBoxFragment
     private lateinit var btnAddCashBox: AppCompatImageView
@@ -101,7 +98,6 @@ class MainActivity : AppCompatActivity(), PeriodDateInterface, AddPlanMoneyInter
         cardAddPlanMoney = findViewById(R.id.cardAddPlanMoney)
         recyclerviewPlanMoney = findViewById(R.id.recyclerviewPlanMoney)
         recyclerviewPlanMoney.layoutManager = GridLayoutManager(this, 2)
-        dialogAddPlanMoney = AddPlanMoneyFragment()
         sharedPlanMoney = getSharedPreferences("PlanMoneys" , Context.MODE_PRIVATE)
         //endregion
 
@@ -265,7 +261,9 @@ class MainActivity : AppCompatActivity(), PeriodDateInterface, AddPlanMoneyInter
 
         //region Setup click plan money
         cardAddPlanMoney.setOnClickListener {
-            dialogAddPlanMoney.show(supportFragmentManager, "dialogAddPlanMoney")
+            val intent = Intent(this, AddPlanMoney::class.java)
+            intent.putExtra("PlanMoneyType", PlanMoneyType.EXPENSES_TYPE)
+            startActivityForResult(intent, RequestCode.Add_PLAN_MONEY)
         }
         //endregion
     }
@@ -424,18 +422,6 @@ class MainActivity : AppCompatActivity(), PeriodDateInterface, AddPlanMoneyInter
     private fun setPlanMoneyRecyclerview() {
         val adapterPlanMoney = PlanMoneyAdapter(planMoneyList, this)
         recyclerviewPlanMoney.adapter = adapterPlanMoney
-    }
-
-    override fun onClickAddIncome() {
-        val intent = Intent(this, AddPlanMoney::class.java)
-        intent.putExtra("PlanMoneyType", PlanMoneyType.INCOME_TYPE)
-        startActivityForResult(intent, RequestCode.Add_PLAN_MONEY)
-    }
-
-    override fun onClickAddExpenses() {
-        val intent = Intent(this, AddPlanMoney::class.java)
-        intent.putExtra("PlanMoneyType", PlanMoneyType.EXPENSES_TYPE)
-        startActivityForResult(intent, RequestCode.Add_PLAN_MONEY)
     }
 
     override fun onItemClick(position: Int) {
