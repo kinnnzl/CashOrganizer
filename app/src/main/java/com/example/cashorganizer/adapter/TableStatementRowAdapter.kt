@@ -19,7 +19,7 @@ class TableStatementRowAdapter(private var statementList: List<StatementViewMode
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, i: Int) {
-        viewHolder.columnDate.text = "${statementList[i]?.incomeDay}/${statementList[i]?.incomeMonth}/${statementList[i]?.incomeYear}"
+        viewHolder.columnDate.text = "${statementList[i]?.incomeDay}/${(statementList[i]?.incomeMonth?.toInt() ?: -1) + 1}/${statementList[i]?.incomeYear}"
         viewHolder.columnCategory.text = statementList[i]?.categoryType
         viewHolder.columnIncome.text = getValueFormatMoney(statementList[i]?.incomeValue)
         viewHolder.columnExpenses.text = getValueFormatMoney(statementList[i]?.expensesValue)

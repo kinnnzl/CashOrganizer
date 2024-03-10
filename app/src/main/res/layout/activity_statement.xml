@@ -39,6 +39,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
                     android:text="ตัั้งแต่วันที่:"
+                    android:textColor="@color/black"
                     android:textStyle="bold">
 
                 </TextView>
@@ -85,6 +86,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
                     android:text="ถึงวันที่:"
+                    android:textColor="@color/black"
                     android:textStyle="bold">
 
                 </TextView>
