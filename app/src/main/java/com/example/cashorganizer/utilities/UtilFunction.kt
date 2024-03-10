@@ -49,6 +49,20 @@ class UtilFunction {
             if (valueTransfer > valueCashBox) result = "จำนวนเงินไม่พอ"
             return result
         }
+
+        fun validateDateStatement(startDay: String, startMonth: String, startYear: String, endDay: String, endMonth: String, endYear: String): String {
+            var result = ""
+            if (startDay.isNullOrEmpty() || startMonth.isNullOrEmpty() || startYear.isNullOrEmpty() || endDay.isNullOrEmpty() ||
+                endMonth.isNullOrEmpty() || endYear.isNullOrEmpty()) result = "กรุณาเลือกวันที่เริ่มต้น และวันที่สิ้นสุด"
+            if (!startDay.isNullOrEmpty() || !startMonth.isNullOrEmpty() || !startYear.isNullOrEmpty() || !endDay.isNullOrEmpty() ||
+                !endMonth.isNullOrEmpty() || !endYear.isNullOrEmpty()) {
+                val startDate = SimpleDateFormat("dd-MM-yyyy").parse("$startDay-$startMonth-$startYear")
+                val endDate = SimpleDateFormat("dd-MM-yyyy").parse("$endDay-$endMonth-$endYear")
+                if (startDate > endDate && result.isNullOrEmpty()) result = "วันที่เริ่มต้น ต้องน้อยกว่าวันที่สิ้นสุด"
+                else if (startDate > endDate && !result.isNullOrEmpty()) result = "$result \nและ วันที่เริ่มต้น ต้องน้อยกว่าวันที่สิ้นสุด"
+            }
+            return result
+        }
     }
 
     object Function {

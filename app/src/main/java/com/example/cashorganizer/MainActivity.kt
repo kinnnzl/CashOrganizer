@@ -23,6 +23,7 @@ import com.example.cashorganizer.adapter.PlanMoneyAdapter
 import com.example.cashorganizer.databinding.ActivityMainBinding
 import com.example.cashorganizer.model.CashBoxViewModel
 import com.example.cashorganizer.model.PlanMoneyViewModel
+import com.example.cashorganizer.model.StatementViewModel
 import com.example.cashorganizer.share.TransferCashBoxInterface
 import com.example.cashorganizer.utilities.MyDragShadowBuilder
 import com.example.cashorganizer.utilities.PlanMoneyType
@@ -34,7 +35,7 @@ import com.google.android.material.card.MaterialCardView
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.lang.reflect.Type
-
+import java.util.Calendar
 
 class MainActivity : AppCompatActivity(), TransferCashBoxInterface,
     PlanMoneyAdapter.ItemClickListener {
@@ -45,9 +46,11 @@ class MainActivity : AppCompatActivity(), TransferCashBoxInterface,
     private lateinit var cardCashBox: MaterialCardView
     private lateinit var cardAddPlanMoney: CardView
     private lateinit var txtValueSummaryIncome: TextView
+    private lateinit var txtSummaryExpenses: TextView
     private lateinit var recyclerviewPlanMoney: RecyclerView
     private lateinit var sharedCashBox : SharedPreferences
     private lateinit var sharedPlanMoney : SharedPreferences
+    private var gson = Gson()
     private var planMoneyList: ArrayList<PlanMoneyViewModel> = ArrayList()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,6 +82,7 @@ class MainActivity : AppCompatActivity(), TransferCashBoxInterface,
 
         //region Setup view summary
         txtValueSummaryIncome = findViewById(R.id.txtValueSummaryIncome)
+        txtSummaryExpenses = findViewById(R.id.txtSummaryExpenses)
         //endregion
     }
 
@@ -91,7 +95,6 @@ class MainActivity : AppCompatActivity(), TransferCashBoxInterface,
 
         //region Setup value plan money
         if (!sharedPlanMoney.getString("PlanMoneys", "").isNullOrEmpty()) {
-            val gson = Gson()
             val type: Type = object : TypeToken<ArrayList<PlanMoneyViewModel?>?>() {}.type
             planMoneyList = gson.fromJson(sharedPlanMoney.getString("PlanMoneys", ""), type)
             setPlanMoneyRecyclerview()
@@ -99,23 +102,31 @@ class MainActivity : AppCompatActivity(), TransferCashBoxInterface,
         //endregion
 
         //region Setup value summary
-        setValueSummaryIncome()
+        setValueSummaryIncome(PlanMoneyType.ALL_TYPE)
         //endregion
     }
 
-    private fun setValueSummaryIncome() {
-        if (!sharedCashBox.getString("CashBoxList", "").isNullOrEmpty()) {
-            val gson = Gson()
-            val type: Type = object : TypeToken<ArrayList<CashBoxViewModel?>?>() {}.type
-            var cashBoxList: ArrayList<CashBoxViewModel?> = gson.fromJson(sharedCashBox.getString("CashBoxList", ""), type)
-            txtValueSummaryIncome.text = convertValueToFormatMoney(cashBoxList.sumOf { it?.incomeValue ?: 0.00 }.toString())
+    private fun setValueSummaryIncome(planType: String) {
+        if (!sharedCashBox.getString("StatementList", "").isNullOrEmpty()) {
+            val type: Type = object : TypeToken<ArrayList<StatementViewModel?>?>() {}.type
+            var cashBoxList: ArrayList<StatementViewModel?> = gson.fromJson(sharedCashBox.getString("StatementList", ""), type)
+            if (planType == PlanMoneyType.ALL_TYPE || planType == PlanMoneyType.INCOME_TYPE)
+                txtValueSummaryIncome.text = convertValueToFormatMoney(cashBoxList.filter { f -> f?.type == PlanMoneyType.INCOME_TYPE }.sumOf { it?.incomeValue ?: 0.00 }.toString())
+            if (planType == PlanMoneyType.ALL_TYPE || planType == PlanMoneyType.EXPENSES_TYPE)
+                txtSummaryExpenses.text = convertValueToFormatMoney(cashBoxList.filter { f -> f?.type == PlanMoneyType.EXPENSES_TYPE }.sumOf { it?.expensesValue ?: 0.00 }.toString())
         }
     }
+
 
     private fun setupClickListeners() {
         //region Setup click toolbar
         binding.customToolbar.ivAccount.setOnClickListener{
             Toast.makeText(this, "Account clicked", Toast.LENGTH_SHORT).show()
+        }
+
+        binding.customToolbar.ivStatement.setOnClickListener{
+            val intent = Intent(this, StatementActivity::class.java)
+            startActivity(intent)
         }
         //endregion
 
@@ -229,32 +240,29 @@ class MainActivity : AppCompatActivity(), TransferCashBoxInterface,
                 val categoryType = data?.getStringExtra("CategoryType") ?: ""
                 val incomeValue = data?.getStringExtra("IncomeValue") ?: "0.00"
                 val incomeDesc = data?.getStringExtra("IncomeDesc") ?: ""
+
                 var cashBoxViewModel = CashBoxViewModel(incomeDay.toInt(), incomeMonth.toInt(), incomeYear.toInt(), incomeType,
                     categoryType, replaceFormatMoney(incomeValue).toDouble(), incomeDesc)
                 var cashBoxSummary = sharedCashBox.getString("CashBoxSummary", "")
-                if (!sharedCashBox.getString("CashBoxList", "").isNullOrEmpty()) {
-                    val gson = Gson()
-                    val type: Type = object : TypeToken<ArrayList<CashBoxViewModel?>?>() {}.type
-                    var cashBoxList: ArrayList<CashBoxViewModel?> = gson.fromJson(sharedCashBox.getString("CashBoxList", ""), type)
-                    cashBoxList.add(cashBoxViewModel)
-                    val jsonCashBoxList = gson.toJson(cashBoxList)
+                if (!sharedCashBox.getString("StatementList", "").isNullOrEmpty()) {
+                    val type: Type = object : TypeToken<ArrayList<StatementViewModel?>?>() {}.type
+                    var statementList: ArrayList<StatementViewModel?> = gson.fromJson(sharedCashBox.getString("StatementList", ""), type)
+                    statementList.add(getStatementViewModelFromCashBox(cashBoxViewModel, cashBoxSummary))
                     cashBoxSummary = (replaceFormatMoney(cashBoxSummary.toString()).toDouble() + cashBoxViewModel.incomeValue).toString()
-                    editShareCashBox.putString("CashBoxList", jsonCashBoxList)
+                    editShareCashBox.putString("StatementList", gson.toJson(statementList))
                     editShareCashBox.putString("CashBoxSummary", cashBoxSummary)
                     valueCashBox.text = convertValueToFormatMoney(cashBoxSummary)
                 }
                 else {
-                    val gson = Gson()
-                    var cashBoxList: ArrayList<CashBoxViewModel?> = ArrayList()
-                    cashBoxList.add(cashBoxViewModel)
-                    val jsonCashBoxList = gson.toJson(cashBoxList)
+                    var cashBoxList: ArrayList<StatementViewModel?> = ArrayList()
+                    cashBoxList.add(getStatementViewModelFromCashBox(cashBoxViewModel, "0.00"))
                     cashBoxSummary = cashBoxViewModel.incomeValue.toString()
-                    editShareCashBox.putString("CashBoxList", jsonCashBoxList)
+                    editShareCashBox.putString("StatementList", gson.toJson(cashBoxList))
                     editShareCashBox.putString("CashBoxSummary", cashBoxSummary)
                     valueCashBox.text = convertValueToFormatMoney(cashBoxSummary)
                 }
                 editShareCashBox.apply()
-                setValueSummaryIncome()
+                setValueSummaryIncome(PlanMoneyType.INCOME_TYPE)
             }
         }
         else if (requestCode == RequestCode.Add_PLAN_MONEY) {
@@ -262,13 +270,33 @@ class MainActivity : AppCompatActivity(), TransferCashBoxInterface,
                 val planMoneyModel = data?.getSerializableExtra("PlanMoneyModel") as PlanMoneyViewModel
                 planMoneyList.add(planMoneyModel)
                 val editPlanMoney = sharedPlanMoney.edit()
-                val gson = Gson()
-                val jsonPlanMoneyList = gson.toJson(planMoneyList)
-                editPlanMoney.putString("PlanMoneys", jsonPlanMoneyList);
+                editPlanMoney.putString("PlanMoneys", gson.toJson(planMoneyList));
                 editPlanMoney.apply()
                 setPlanMoneyRecyclerview()
             }
         }
+    }
+
+    private fun getStatementViewModelFromCashBox(
+        cashBoxViewModel: CashBoxViewModel,
+        cashBoxSummary: String?
+    ): StatementViewModel {
+        return StatementViewModel(cashBoxViewModel.incomeDay, cashBoxViewModel.incomeMonth, cashBoxViewModel.incomeYear,
+            cashBoxViewModel.incomeType, cashBoxViewModel.categoryType, cashBoxViewModel.incomeValue,
+            cashBoxViewModel.incomeDesc, PlanMoneyType.INCOME_TYPE, 0.00, (cashBoxSummary.toString().toDouble() + cashBoxViewModel.incomeValue))
+    }
+
+    private fun getStatementViewModelFromTransfer(
+        planMoneyViewModel: PlanMoneyViewModel,
+        balance: String,
+        valueTransfer: String
+    ): StatementViewModel? {
+        var currentDate = Calendar.getInstance()
+        val year = currentDate.get(Calendar.YEAR)
+        val month = currentDate.get(Calendar.MONTH)
+        val day = currentDate.get(Calendar.DAY_OF_MONTH)
+        return StatementViewModel(day, month, year, "", planMoneyViewModel.planMoneyName, 0.00, "", PlanMoneyType.EXPENSES_TYPE,
+            replaceFormatMoney(valueTransfer).toDouble(), replaceFormatMoney(balance).toDouble())
     }
 
     private fun setPlanMoneyRecyclerview() {
@@ -283,8 +311,8 @@ class MainActivity : AppCompatActivity(), TransferCashBoxInterface,
     override fun transferCashBoxToPlanMoney(indexPlanMoney: Int, valueTransfer: String) {
         val getPlanMoneys = sharedPlanMoney.getString("PlanMoneys", "")
         val getCashBoxSummary = sharedCashBox.getString("CashBoxSummary", "")
-        if (!getPlanMoneys.isNullOrEmpty() && !getCashBoxSummary.isNullOrEmpty()) {
-            val gson = Gson()
+        val statementList = sharedCashBox.getString("StatementList", "")
+        if (!getPlanMoneys.isNullOrEmpty() && !getCashBoxSummary.isNullOrEmpty() && !statementList.isNullOrEmpty()) {
             val type: Type = object : TypeToken<ArrayList<PlanMoneyViewModel?>?>() {}.type
             planMoneyList = gson.fromJson(getPlanMoneys, type)
             if (planMoneyList.isNotEmpty() && indexPlanMoney != -1) {
@@ -293,16 +321,20 @@ class MainActivity : AppCompatActivity(), TransferCashBoxInterface,
                         - replaceFormatMoney(valueTransfer).toDouble()).toString())
 
                 val editPlanMoney = sharedPlanMoney.edit()
-                val gson = Gson()
-                val jsonPlanMoneyList = gson.toJson(planMoneyList)
-                editPlanMoney.putString("PlanMoneys", jsonPlanMoneyList);
+                editPlanMoney.putString("PlanMoneys", gson.toJson(planMoneyList));
                 editPlanMoney.apply()
 
                 val editCashBox = sharedCashBox.edit()
                 editCashBox.putString("CashBoxSummary", replaceFormatMoney(valueCashBox.text.toString()));
+
+                val type: Type = object : TypeToken<ArrayList<StatementViewModel?>?>() {}.type
+                var statementViewModelList: ArrayList<StatementViewModel?> = gson.fromJson(statementList, type)
+                statementViewModelList.add(getStatementViewModelFromTransfer(planMoneyList[indexPlanMoney], valueCashBox.text.toString(), valueTransfer))
+                editCashBox.putString("StatementList", gson.toJson(statementViewModelList))
                 editCashBox.apply()
 
                 setPlanMoneyRecyclerview()
+                setValueSummaryIncome(PlanMoneyType.EXPENSES_TYPE)
             }
         }
     }

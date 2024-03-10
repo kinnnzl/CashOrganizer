@@ -100,7 +100,7 @@ class CashBoxActivity : AppCompatActivity(), IncomeDateInterface {
             else {
                 val intent = Intent()
                 intent.putExtra("IncomeDay", incomeDay)
-                intent.putExtra("IncomeMonth", incomeMonth)
+                intent.putExtra("IncomeMonth", incomeMonth.toString())
                 intent.putExtra("IncomeYear", incomeYear)
                 intent.putExtra("IncomeType", incomeType)
                 intent.putExtra("CategoryType", categoryType)

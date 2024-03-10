@@ -22,4 +22,5 @@ object RecyclerviewCode {
 object PlanMoneyType {
     const val INCOME_TYPE = "INCOME"
     const val EXPENSES_TYPE = "EXPENSES"
+    const val ALL_TYPE = "ALL"
 }
